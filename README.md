@@ -68,15 +68,3 @@ The script `TwoStage_Predictions_DB.py` acts as the system orchestrator:
 *   **Database:** MySQL Connector
 
 ---
-
-<!-- REPOSITORY STRUCTURE -->
-## 📂 Repository Structure
-```text
-├── /database                       # MySQL setup scripts
-├── ResNet_Species_Classification.ipynb # Stage 2 Training
-├── YOLOv8_Species_Detection.ipynb    # Stage 1 Training
-├── TwoStage_Predictions_DB.py      # Main Orchestrator Script
-├── best.pt                         # YOLOv8 Trained Weights
-├── resnet50_model.pth              # ResNet50 Trained Weights
-├── data_augment.py                 # Augmentation Engine
-└── data_collection.py              # Data Normalization Script
