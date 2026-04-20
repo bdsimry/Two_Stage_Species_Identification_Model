@@ -27,7 +27,7 @@ To ensure model robustness against imbalanced wildlife datasets, a custom prepro
 
 *   **Balanced Collection:** `data_collection.py` maps similar species names to a standard format and enforces a 50-image-per-species limit to prevent class dominance.
 *   **Advanced Augmentation:** `data_augment.py` utilizes the **Albumentations** library to generate synthetic data for underrepresented species using noise injection, rotation, and brightness adjustments.
-*   **Roboflow Integration:** Final dataset curation (v10) managed via Roboflow for precise annotation and preprocessing. [🔗 View Dataset](https://your-roboflow-link-here.com)
+*   **Roboflow Integration:** Final dataset curation (v10) managed via Roboflow for precise annotation and preprocessing.
 
 ---
 
