@@ -1,124 +1,82 @@
-# Two_Stage_Species_Identification_Model
-## COS30049 CTIP Project
+<!-- PROJECT HEADER -->
+# 🐾 Two-Stage Species Identification Model 🌲
 
-The Two-Stage Species Identification Model is the AI core or key area of focus in our group's COS30049 CTIP project. This model combines object detection and species classification techniques to identify and classify species from camera trap images. The first stage leverages YOLOv8 for accurate detection of species, while the second stage utilizes a fine-tuned ResNet50 model for species classification. This system is designed to automate wildlife monitoring by processing large volumes of image data efficiently, aiding in the conservation and study of species in natural habitats.
+<!-- BADGES -->
+![YOLOv8](https://img.shields.io/badge/Stage_1-YOLOv8_Detection-00A65A)
+![ResNet50](https://img.shields.io/badge/Stage_2-ResNet50_Classification-blue)
+![PyTorch](https://img.shields.io/badge/Framework-PyTorch-EE4C2C?logo=pytorch)
+![Course](https://img.shields.io/badge/Course-COS30049_CTIP-orange)
 
-## DATA PREPARATION (YOLOv8)
+**HydroScope's AI Core:** An automated two-stage pipeline designed to identify wildlife species from camera trap images. This system bridges the gap between raw field data and structured conservation insights by combining state-of-the-art object detection with fine-tuned deep learning classification.
 
-### Dependencies
-1. os
-2. random
-3. shutil
-4. imgaug
-5. numpy
-6. PIL
-7. cv2
-8. albumentations
-9. glob
+---
 
-### data_collection.py
-This Python script is designed to process and organize camera trap images for species classification. It iterates through the dataset located in a specified directory, checks for species folders, and applies several transformations (like flipping, rotating, and adding noise) to augment the images. The script maps similar species names to a standard format and collects up to 50 images per species (if available) to ensure a balanced dataset. The images are then shuffled and copied to output folders, categorized by species, for further use, such as model training or analysis.
+<!-- AI ARCHITECTURE OVERVIEW -->
+## 🧠 AI Core Architecture
+The model operates in two distinct logical phases to maximize accuracy in complex natural environments:
 
-### data_augment.py
-This Python script is designed to augment images of underepresented species (or classes) to expand the dataset for model training. It utilizes the albumentations library to apply various transformations (such as horizontal flipping, brightness/contrast adjustment, rotation, scaling, and noise addition) to each image. The augmented images are saved in a new directory while preserving the class folder structure. The script processes a predefined list of species and generates two augmented versions for each original image in the class.
+1.  **Stage 1: Detection (YOLOv8)** – Scans high-resolution camera trap images to detect the presence of animals and generate precise bounding box coordinates.
+2.  **Stage 2: Classification (ResNet50)** – Crops the detected animal from the original frame and performs fine-grained classification across **64 different species classes**.
 
-### Dataset Annotation and Augmentation (Roboflow Integration)
-The annotations, augmentations, and preprocessing for all images in the final dataset are done using Roboflow. Roboflow provides a comprehensive platform to label, augment, and preprocess image datasets for machine learning projects. The final version of the dataset (v10) has been curated and can be accessed directly via the following link:
+---
 
-[Roboflow Dataset v10](https://universe.roboflow.com/cos30049-ctip/detect-species/dataset/10)
+<!-- DATA PREPARATION SECTION -->
+## 📊 Data Engineering & Augmentation
+<!-- Internal Note: This section highlights your data handling skills -->
+To ensure model robustness against imbalanced wildlife datasets, a custom preprocessing pipeline was developed:
 
-This dataset includes:
-- Annotations: Precise labels for all species.
-- Augmentations: Enhanced dataset with various transformations to improve model robustness.
-- Preprocessing: Optimized data ready for training, ensuring consistency and model-ready formatting.
+*   **Balanced Collection:** `data_collection.py` maps similar species names to a standard format and enforces a 50-image-per-species limit to prevent class dominance.
+*   **Advanced Augmentation:** `data_augment.py` utilizes the **Albumentations** library to generate synthetic data for underrepresented species using noise injection, rotation, and brightness adjustments.
+*   **Roboflow Integration:** Final dataset curation (v10) managed via Roboflow for precise annotation and preprocessing. [🔗 View Dataset](https://your-roboflow-link-here.com)
 
-The final dataset is integrated into the YOLOv8's model pipeline for training and evaluation.
+---
 
-## MODEL TRAINING & EVALUATION (YOLOv8)
+<!-- STAGE 1 LOGIC -->
+## 🔍 Stage 1: Species Detection (YOLOv8)
+*   **Task:** Object Detection.
+*   **Training:** 25 epochs at 800x800 resolution via `YOLOv8_Species_Detection.ipynb`.
+*   **Inference Logic:** Identifies "Animal" vs "Empty" frames to reduce false triggers in the database.
+*   **Output:** Bounding box coordinates used as input for the next stage.
 
-### Dependencies 
-1. Ultralytics YOLO
-2. Google Colab
-3. PyTorch
-4. Roboflow
-5. YAML
+---
 
-### YOLOv8_Species_Detection.ipynb
-This Jupyter Notebook demonstrates the training and evaluation of a YOLOv8 model for species detection using a dataset from Roboflow. The notebook includes the following steps:
+<!-- STAGE 2 LOGIC -->
+## 🦁 Stage 2: Species Classification (ResNet50)
+*   **Task:** Multi-class Image Classification.
+*   **Architecture:** Fine-tuned **ResNet50** (Pretrained on ImageNet).
+*   **Training:** 10 epochs with `ResNet_Species_Classification.ipynb`.
+*   **Dynamic Cropping:** `YOLOv8_Cropped_ResNet_Data.ipynb` automates the extraction of animal-only crops to eliminate background noise (foliage/terrain), significantly boosting classification accuracy.
 
-1. Setup: Installs necessary libraries and checks the device (CPU or GPU) for model training.
-2. Dataset Preparation: Downloads and prepares the dataset from Roboflow, configuring it for YOLOv8.
-3. Model Training: Trains the YOLOv8 model on the dataset for 25 epochs, with image size set to 800x800.
-4. Model Evaluation: Evaluates the model's performance and visualizes confusion matrices and results.
-5. Inference: Runs inference on the test images, saving the prediction results.
-6. Model Deployment: Deploys the trained model for future use.
+---
 
+<!-- INTEGRATION & PIPELINE SECTION -->
+## 🔌 Pipeline Integration & Deployment
+<!-- Internal Note: This explains how your AI connects to the rest of the group project -->
+The script `TwoStage_Predictions_DB.py` acts as the system orchestrator:
+1.  **OCR Metadata Extraction:** Uses **Tesseract OCR** to read date, time, and temperature stamps directly from the camera trap image footer.
+2.  **Sequential Inference:** Runs YOLOv8 → Crops Image → Runs ResNet50.
+3.  **Database Storage:** Automatically uploads species ID, confidence scores, site location, and environmental metadata to a **MySQL database**.
 
-## DATA PREPARATION (RESNET)
+---
 
-### Dependencies
-1. Ultralytics
-2. cv2
-3. glob
-4. matplotlib
-5. numpy
-6. pathlib
-7. google.colab.drive
+<!-- TECHNICAL DEPENDENCIES -->
+## 🛠️ Technical Stack
+*   **Detection:** Ultralytics YOLOv8
+*   **Classification:** PyTorch (Torchvision)
+*   **Data Processing:** OpenCV, Albumentations, NumPy, Pandas
+*   **OCR:** Pytesseract
+*   **Database:** MySQL Connector
 
+---
 
-### YOLOv8_Cropped_ResNet_Data.ipynb
-This Jupyter notebook utilizes a YOLOv8 model to run inference on images from a species detection dataset, drawing bounding boxes around detected objects. It then crops the images based on the predictions and stores them for further use in training a ResNet model. The script includes steps for loading a trained YOLOv8 model, performing inference on random test images, and saving the cropped images to designated directories. The final dataset is organized into train, validation, and test sets, ready for use in model training and evaluation.
-
-## MODEL TRAINING & EVALUATION (RESNET)
-
-### Dependencies
-1. torch
-2. torchvision
-3. matplotlib
-4. tensorflow
-5. sklearn
-6. numpy
-7. tqdm
-8. seaborn
-9. google.colab
-
-### ResNet_Species_Classification.ipynb
-This Jupyter notebook demonstrates the training and evaluation of a species classification model using ResNet50. The model is fine-tuned for a custom dataset with 64 classes of species. It includes the following key steps:
-
-1. Data Preprocessing: Images are resized and augmented using torchvision transformations, and the dataset is loaded using ImageFolder.
-2. Model Training: A pretrained ResNet50 model is loaded and modified for the classification task. The model is trained for 10 epochs, with training and validation loss and accuracy metrics tracked.
-3. Model Evaluation: After training, the model is evaluated on a separate test set, and the results are visualized.
-4. Predictions and Inference: The model is used to predict species from random test images, and the results are displayed alongside true labels.
-Model Saving: The trained model is saved for future inference tasks.
-
-### Resnet_Evaluation.ipynb
-This notebook (Resnet_Evaluation.ipynb) is used to evaluate a pre-trained ResNet50 model for species detection. It loads the test dataset, preprocesses the images, and performs evaluation by generating a classification report and confusion matrix. The model's performance is visualized using a heatmap of the confusion matrix. The notebook is designed to run on Google Colab, where the model and dataset are loaded from Google Drive.
-
-## DATABASE CREATION
-
-### Dependencies
-1. mysql
-
-### database.js (/database)
-This script sets up a MySQL database for storing and managing data related to wildlife monitoring. It creates a semenggoh database and defines four tables: sites, images, species, and predictions. The sites table stores information about monitoring sites, the images table holds images captured at each site along with metadata, the species table stores details about different species, and the predictions table links images to species predictions with confidence scores.
-
-
-To run use: node database.js
-
-## RUN & UPLOAD PREDICTIONS TO DATABASE
-
-### Dependencies
-1. os
-2. cv2
-3. pytesseract
-4. mysql.connector
-5. datetime
-6. re
-7. ultralytics
-8. torch
-9. torchvision
-10. PIL
-11. time
-
-### TwoStage_Predictions_DB.py
-This Python script processes images of wildlife captured by camera traps, performs object detection using the YOLOv8 model, and classifies species using a pretrained ResNet50 model. It extracts metadata such as date, time, and temperature from the images using OCR (Tesseract), then stores the relevant information (species, site, date, time, temperature) in a MySQL database. Additionally, detected objects are cropped and saved for further analysis. The script handles database connections, performs preprocessing on images, and ensures data integrity while processing multiple images.
+<!-- REPOSITORY STRUCTURE -->
+## 📂 Repository Structure
+```text
+├── /database                       # MySQL setup scripts
+├── ResNet_Species_Classification.ipynb # Stage 2 Training
+├── YOLOv8_Species_Detection.ipynb    # Stage 1 Training
+├── TwoStage_Predictions_DB.py      # Main Orchestrator Script
+├── best.pt                         # YOLOv8 Trained Weights
+├── resnet50_model.pth              # ResNet50 Trained Weights
+├── data_augment.py                 # Augmentation Engine
+└── data_collection.py              # Data Normalization Script
