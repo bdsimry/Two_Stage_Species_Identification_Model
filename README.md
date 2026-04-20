@@ -7,7 +7,7 @@
 ![PyTorch](https://img.shields.io/badge/Framework-PyTorch-EE4C2C?logo=pytorch)
 ![Course](https://img.shields.io/badge/Course-COS30049_CTIP-orange)
 
-**HydroScope's AI Core:** An automated two-stage pipeline designed to identify wildlife species from camera trap images. This system bridges the gap between raw field data and structured conservation insights by combining state-of-the-art object detection with fine-tuned deep learning classification.
+**COS30049 CTIP Project's AI Core:** An automated two-stage pipeline designed to identify wildlife species from camera trap images. This system bridges the gap between raw field data and structured conservation insights by combining state-of-the-art object detection with fine-tuned deep learning classification.
 
 ---
 
